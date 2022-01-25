@@ -509,7 +509,7 @@ class CCWallet:
                 return proof
         return None
 
-    async def create_tandem_xch_tx(
+    async def create_tandem_xcc_tx(
         self,
         fee: uint64,
         amount_to_claim: uint64,
@@ -582,7 +582,7 @@ class CCWallet:
         selected_cat_amount = sum([c.amount for c in cat_coins])
         assert selected_cat_amount >= starting_amount
 
-        # Figure out if we need to absorb/melt some XCH as part of this
+        # Figure out if we need to absorb/melt some XCC as part of this
         regular_chives_to_claim: int = 0
         if payment_amount > starting_amount:
             fee = uint64(fee + payment_amount - starting_amount)
@@ -617,14 +617,14 @@ class CCWallet:
                 if need_chives_transaction:
                     if fee > regular_chives_to_claim:
                         announcement = Announcement(coin.name(), b"$", b"\xca")
-                        chives_tx, _ = await self.create_tandem_xch_tx(
+                        chives_tx, _ = await self.create_tandem_xcc_tx(
                             fee, uint64(regular_chives_to_claim), announcement_to_assert=announcement
                         )
                         innersol = self.standard_wallet.make_solution(
                             primaries=primaries, coin_announcements={announcement.message}
                         )
                     elif regular_chives_to_claim > fee:
-                        chives_tx, _ = await self.create_tandem_xch_tx(fee, uint64(regular_chives_to_claim))
+                        chives_tx, _ = await self.create_tandem_xcc_tx(fee, uint64(regular_chives_to_claim))
                         innersol = self.standard_wallet.make_solution(
                             primaries=primaries, coin_announcements_to_assert={announcement.name()}
                         )
