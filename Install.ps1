@@ -44,8 +44,8 @@ Write-Output "Python version is:" $pythonVersion
 py -m venv venv
 
 venv\scripts\python -m pip install --upgrade pip setuptools wheel
-venv\scripts\pip install --extra-index-url https://pypi.chives.net/simple/ miniupnpc==2.2.2
-venv\scripts\pip install --editable . --extra-index-url https://pypi.chives.net/simple/
+venv\scripts\pip install --extra-index-url https://pypi.chia.net/simple/ miniupnpc==2.2.2
+venv\scripts\pip install --editable . --extra-index-url https://pypi.chia.net/simple/
 
 Write-Output ""
 Write-Output "Chives blockchain .\Install.ps1 complete."
@@ -53,7 +53,7 @@ Write-Output "For assistance join us on Keybase in the #support chat channel:"
 Write-Output "https://keybase.io/team/chives_network.public"
 Write-Output ""
 Write-Output "Try the Quick Start Guide to running chives-wallet:"
-Write-Output "https://github.com/Chia-Network/chives-blockchain/wiki/Quick-Start-Guide"
+Write-Output "https://github.com/Chia-Network/chia-blockchain/wiki/Quick-Start-Guide"
 Write-Output ""
 Write-Output "To install the GUI type '.\Install-gui.ps1' after '.\venv\scripts\Activate.ps1'."
 Write-Output ""

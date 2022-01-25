@@ -32,7 +32,7 @@ def init_cmd(
     - Run `chives init -c [directory]` on your remote harvester,
       where [directory] is the the copy of your Farming Machine CA directory
     - Get more details on remote harvester on Chives wiki:
-      https://github.com/Chia-Network/chives-blockchain/wiki/Farming-on-many-machines
+      https://github.com/Chia-Network/chia-blockchain/wiki/Farming-on-many-machines
     """
     from pathlib import Path
     from .init_funcs import init
