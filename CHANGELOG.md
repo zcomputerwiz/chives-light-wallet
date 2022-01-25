@@ -47,7 +47,7 @@ We have some great improvements in this release: We launched our migration of ke
 ### Added
 
 - Added support for keyring migration from keychain, and the addition of passphrase support. Learn more at our [wiki](https://github.com/HiveProject2021/chives-light-wallet/wiki/Passphrase-Protected-Chives-Keys-and-Key-Storage-Migration).
-- Enabled experimental use of a new Chialisp compiler in clvm_tools_rs in chives-blockchain, which is off by default, and substantially improves compile time.
+- Enabled experimental use of a new Chialisp compiler in clvm_tools_rs in chives-wallet, which is off by default, and substantially improves compile time.
 - Added Windows PowerShell scripts to support installation from source.
 - Added a test to check that we don't reorg subslots unless there is a new peak.
 - Added harvester info to farmer logging.
@@ -172,7 +172,7 @@ Today we’re releasing version 1.2.6 to address a resource bug with nodes, and 
 - Improvements to sync full nodes faster by improving the concurrency for downloading and validating blocks.
 - Added new call for logging peer_host: get_peer_logging that will use the peer_host value, typically an IP address, when the peername cannot be retrieved.
 - Added documentation for treehash params.
-- Added a py.typed file that allows other projects that pip install chives-blockchain to type check using our functions with mypy.
+- Added a py.typed file that allows other projects that pip install chives-wallet to type check using our functions with mypy.
 - Added an RPC for coin records by multiple coin names.
 - Enabled querying AAAA records for DNS Introducer.
 - We now set the version for the GUI when doing a manual install using the install-gui.sh script. Uses a python helper to get the version of the chives install and then converts it into proper npm format and puts that into package.json.
@@ -537,7 +537,7 @@ Batch process weight proof epochs in groups of 900 to fit below May 2020 sqlite 
 ### Changed
 
 - The plotter in bitfield mode is much improved in plotting speed (~15% faster than in 1.0.3), now requires 28% less temporary space (238.3 GiB/256 GB), and now uses its maximum memory in phase 1 and only needs 3389MiB for optimal sorting of a k32. Total writes should also be down by about 20%. On almost all machines we expect bitfield to be as fast or faster. For CPUs that predate the [Nehalem architecture](https://en.wikipedia.org/wiki/Nehalem_(microarchitecture)), bitfield plotting will not work and you will need to use no bitfield. Those CPUs were generally designed before 2010.
-- The `src` directory in chives-blockchain has been changed to `chives` to avoid namespace collisions.
+- The `src` directory in chives-wallet has been changed to `chives` to avoid namespace collisions.
 - GUI install builds have been simplified to rely on one `.spec` file in `chives/`
 - The weight proof timeout can now be configured in config.yaml.
 - Peer discovery is now retried more often after you receive initial peers.
@@ -612,7 +612,7 @@ Batch process weight proof epochs in groups of 900 to fit below May 2020 sqlite 
 ### Fixed
 
 - Weight proofs, especially wallet weight proofs were failing when some Blueboxed proofs of time were encountered.
-- Users can now pip install e.g. chives-blockchain==1.0.1 on most platforms.
+- Users can now pip install e.g. chives-wallet==1.0.1 on most platforms.
 - Sometimes the GUI had an error regarding MainWindow.
 
 ## 1.0.0 First Release of Chives Blockchain 2021-03-17
@@ -723,7 +723,7 @@ Batch process weight proof epochs in groups of 900 to fit below May 2020 sqlite 
 - `chives keys add` takes secret words a prompt on the command line or stdin instead of command line arguments for security.
 - Version 1.0.1 of chiavdf was added. This brought MPIR on Windows to the most recent release. Additionally we removed inefficient ConvertIntegerToBytes() and ConvertBytesToInt() functions, use GMP library's mpz_export/mpz_import for big integers and simple helper functions for built-in integer types. The latter are taken from chiavdf. We now require compressed forms to be encoded canonically when deserializing. This should prevent potential grinding attacks where some non-canonical encodings of a compressed form could be used to change its hash and thus the next challenges derived from it. Canonically encoded compressed forms must be reduced and must produce the same string when deserialized and serialized again.
 - Version 1.0 of our BLS signature library is included. We brought Relic, gmp and MPIR up to their most recent releases. We again thank the Dash team for their fixes and improvements.
-- We now hand build Apple Silicon native binary wheels for all chives-blockchain dependencies and host them at [https://pypi.chia.net/simple](https://pypi.chia.net/simple). We are likely to hand build a MacOS ARM64 dmg available and certainly will for 1.0. You can install natively on M1 now with the `git clone` developer method today. Just make sure Python 3.9 is installed. `python3 --version` works.
+- We now hand build Apple Silicon native binary wheels for all chives-wallet dependencies and host them at [https://pypi.chia.net/simple](https://pypi.chia.net/simple). We are likely to hand build a MacOS ARM64 dmg available and certainly will for 1.0. You can install natively on M1 now with the `git clone` developer method today. Just make sure Python 3.9 is installed. `python3 --version` works.
 - The GUI now shows you which network you are connected to on the Full Node page. It will also wait patiently for the green flag to drop on a network launch.
 - In the GUI you can only plot k=32 or larger with the single exception of k=25 for testing. You will have to confirm choosing k=25 however. Thanks to @jespino for help on this and limiting the cli as well.
 - The restore smart wallets from backup prompt has been improved to better get the intent across and that it can be skipped.
@@ -774,7 +774,7 @@ Batch process weight proof epochs in groups of 900 to fit below May 2020 sqlite 
 
 - Testnets and mainnet now set their minimum `k` size and enforce it. RC5 testnet will reject plots of size less than k=32.
 - Sub slots now require 16 blocks instead of 12.
-- Thanks to @xdustinface of Dash, the BlS Signature library has been updated to 0.9 with clean ups and some speed ups. This changed how the G2 infinity element was handled and we now manage it inside of chives-blockchain, etc., instead of in blspy.
+- Thanks to @xdustinface of Dash, the BlS Signature library has been updated to 0.9 with clean ups and some speed ups. This changed how the G2 infinity element was handled and we now manage it inside of chives-wallet, etc., instead of in blspy.
 - We have updated the display of peer nodes and moved adding a peer to it's own pop up in the GUI.
 - Block searching in the GUI has been improved.
 - @jespino added i18n support and refactored how locales are loaded in the GUI. Additionally he moved more strings into the translation infrastructure for translators.
@@ -783,7 +783,7 @@ Batch process weight proof epochs in groups of 900 to fit below May 2020 sqlite 
 - We made two HashPrime optimizations in chiavdf. This forces numbers being tested for primality to be odd and avoids an unnecessary update of the sprout vector by stopping after the first non-zero value. This is a breaking change as it changes the prime numbers generated from a given seed. We believe this is the final breaking change for chiavdf.
 - chiabip158 was set to a gold 1.0 version.
 - Comments to Chialisp and clvm source have been updated for all of the Chialisp changes over the proceeding three weeks.
-- And thanks yet again to @jespino for a host of PRs to add more detailed typing to various components in chives-blockchain.
+- And thanks yet again to @jespino for a host of PRs to add more detailed typing to various components in chives-wallet.
 - aiohttp was updated to 3.7.4 to address a low severity [security issue](https://github.com/advisories/GHSA-v6wp-4m6f-gcjg).
 - calccrypto/uint128_t was updated in the Windows chiapos implementation. Chiapos required some changes its build process to support MacOS ARM64.
 
@@ -914,7 +914,7 @@ all fields that referred to sub blocks are changed to blocks.
 - We are moving away from the terms sub blocks and blocks in our new consensus. What used to be called sub blocks will now just be blocks. Some blocks are now also transaction blocks. This is simpler both in the code and to reason about. Not all the code or UI may have caught up yet.
 - This release has the final mainnet rewards schedule. During the first three years, each block winner will win 2 TXCC/XCC per block for a total of 9216 TXCC per day from 4608 challenges per day.
 - Smart transactions now use an announcement instead of 'coin consumed' or lock methods.
-- The GUI is now in a separate submodule repository from chives-blockchain, [chives-blockchain-gui](https://github.com/HiveProject2021/chives-blockchain-gui). The installers and install scripts have been updated and it continues to follow the same install steps. Note that the GUI directory will now be `chives-blockchain-gui`. The workflow for this may be "touch and go" for people who use the git install methods over the short term.
+- The GUI is now in a separate submodule repository from chives-wallet, [chives-blockchain-gui](https://github.com/HiveProject2021/chives-blockchain-gui). The installers and install scripts have been updated and it continues to follow the same install steps. Note that the GUI directory will now be `chives-blockchain-gui`. The workflow for this may be "touch and go" for people who use the git install methods over the short term.
 - Very large coin counts are now supported.
 - Various RPC endpoints have been renamed to follow our switch to "just blocks" from sub blocks.
 - We've made changes to the protocol handshake and the blockchain genesis process to support mainnet launch and running/farming more than one chain at a time. That also means we can't as easily determine when an old version of the peer tries to connect so we will put warnings in the logs for now.
@@ -1121,7 +1121,7 @@ all fields that referred to sub blocks are changed to blocks.
 - `chia netspace` has been refactored for new consensus.
 - aiohttp, clvm-tools, colorlog, concurrent-log-handler, keyring, cryptography, and sortedcontainers have been upgraded to their current versions.
 - Tests now place a cache of blocks and plots in the ~/.chives/ directory to speed up total testing time.
-- Changes were made to chiapos to correctly support the new bitfiled backpropogation on FreeBSD and OpenBSD. With the exception of needing to work around python cryptography as outlined on the wiki, FreeBSD and OpenBSD should be able to compile and run chives-blockchain.
+- Changes were made to chiapos to correctly support the new bitfiled backpropogation on FreeBSD and OpenBSD. With the exception of needing to work around python cryptography as outlined on the wiki, FreeBSD and OpenBSD should be able to compile and run chives-wallet.
 - With the change to new consensus many components of the chain and local database are not yet stored optimally. Startup and sync times may be slower than usual so please be patient. This will improve next release.
 - Errata: Coinbase amount is missing from the GUI Block view.
 - Eratta: wallet Backup, and Fly-sync on the wallet are currently not working.
@@ -1152,7 +1152,7 @@ all fields that referred to sub blocks are changed to blocks.
 - A segfault caused by memory leaks in bls-library has been fixed. This should end the random farmer and harvester crashes over time as outlined in [Issue 500](https://github.com/HiveProject2021/chives-light-wallet/issues/500).
 - Plotting could hang up retrying in an "error 0" state due to a bug in table handling in some edge cases.
 - CPU utilization as reported in the plotter is now accurate for Windows.
-- FreeBSD and OpenBSD should be able to build and install chives-blockchain and its dependencies again.
+- FreeBSD and OpenBSD should be able to build and install chives-wallet and its dependencies again.
 - Starting with recent setuptools fixes, we can no longer pass an empty string to the linker on Windows when building binary wheels in the sub repos. Thanks @jaraco for tracking this down.
 
 ## [1.0beta17] aka Beta 1.17 - 2020-10-22
@@ -1174,7 +1174,7 @@ all fields that referred to sub blocks are changed to blocks.
 ### Added
 
 - The Chives GUI now supports dark and light mode.
-- The GUI now supports translations and localizations. If you'd like to add your language you can see the examples in [the locales directory](https://github.com/HiveProject2021/chives-light-wallet/tree/dev/electron-react/src/locales) of the chives-blockchain repository.
+- The GUI now supports translations and localizations. If you'd like to add your language you can see the examples in [the locales directory](https://github.com/HiveProject2021/chives-light-wallet/tree/dev/electron-react/src/locales) of the chives-wallet repository.
 - `chives check plots` now takes a `-g` option that allows you to specify a matching path string to only check a single plot file, a wild card list of plot files, or all plots in a single directory instead of the default behavior of checking every directory listed in your config.yaml. A big thank you to @eFishCent for this pull request!
 - Better documentation of the various timelord options in the default config.yaml.
 
@@ -1421,7 +1421,7 @@ that ci runs successfully complete from PRs or forked repositories.
 we expect to add in future releases.
 - The chives executable is now available if installing from the Windows or MacOS
 Graphical installer. Try `./chives -h` from
-`~\AppData\Local\Chives-Blockchain\app-0.1.8\resources\app.asar.unpacked\daemon\`
+`~\AppData\Local\Chives-Wallet\app-0.1.8\resources\app.asar.unpacked\daemon\`
 in Windows or
 `/Applications/Chives.app/Contents/Resources/app.asar.unpacked/daemon` on MacOS.
 
@@ -1533,7 +1533,7 @@ relic. We will make a patch available for these systems shortly.
 - We added total network storage space estimation to the node RPC at the `/get_network_space` endpoint instead of only being available in the cli. The RPC endpoint takes two block header hashes and estimates space between those header hashes.
 - Logs now autorotate. Once the debug.log reaches 20MB it is compressed and archived keeping 7 historical 20MB logs.
 - We now have a CHANGELOG.md that adheres closely to the [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) standard. We merged in the version history and updated some previous release notes to capture items important to the change log. We are modifying our release process to accumulate changes at the top of the change log and then copy those to the release notes at the time of the release.
-- We added [lgtm](https://lgtm.com/) source analysis on pull request to the chives-blockchain, chiapos, chiavdf, chiabip158, and bls-library repositories to add some automated security analysis to our ci.
+- We added [lgtm](https://lgtm.com/) source analysis on pull request to the chives-wallet, chiapos, chiavdf, chiabip158, and bls-library repositories to add some automated security analysis to our ci.
 
 ### Changed
 
@@ -1691,7 +1691,7 @@ relic. We will make a patch available for these systems shortly.
 - We have revamped the chives management command line. To start a farmer all you have to do is start the venv with `. ./activate` and then type `chives-start-farmer &`. The [README.md](https://github.com/HiveProject2021/chives-light-wallet/blob/main/README.md) has been updated to reflect the new commands.
 - We have moved all node to node communication to TLS 1.3 by default. For now, all TLS is unauthenticated but certain types of over the wire node to node communications will have the ability to authenticate both by certificate and by inter protocol signature. Encrypting over the wire by default stops casual snooping of transaction origination, light wallet to trusted node communication, and harvester-farmer-node communication for example. This leaves only the mempool and the chain itself open to casual observation by the public and the various entities around the world.
 - Configuration directories have been moved to a default location of HomeDirectory/.chives/release/config, plots/ db/, wallet/ etc. This can be overridden by `export CHIVES_ROOT=~/.chives` for example which would then put the plots directory in `HomeDirectory/.chives/plots`.
-- The libraries chia-pos, chives-fast-vdf, and chives-bip-158 have been moved to their own repositories: [chiapos](https://github.com/Chia-Network/chiapos), [chiavdf](https://github.com/Chia-Network/chiavdf), and [chaibip158](https://github.com/Chia-Network/chiabip158). They are brought in by chives-blockchain at install time. Our BLS signature library remains at [bls-signatures](https://github.com/Chia-Network/bls-signatures).
+- The libraries chia-pos, chives-fast-vdf, and chives-bip-158 have been moved to their own repositories: [chiapos](https://github.com/Chia-Network/chiapos), [chiavdf](https://github.com/Chia-Network/chiavdf), and [chaibip158](https://github.com/Chia-Network/chiabip158). They are brought in by chives-wallet at install time. Our BLS signature library remains at [bls-signatures](https://github.com/Chia-Network/bls-signatures).
 - The install process now brings in chiapos, chiavdf, etc from Pypi where they are auto published via GitHub Actions ci using cibuildwheel. Check out `.github/workflows/build.yml` for build methods in each of the sub repositories.
 - `chives-regenerate-keys` has been renamed `chives-generate-keys`.
 - setproctitle is now an optional install dependency that we will continue to install in the default install methods.
@@ -1760,7 +1760,7 @@ relic. We will make a patch available for these systems shortly.
 - Due to changes to the sqlite database that are not backwards compatible, re-synch will be required.
 - Loading the blockchain only loads headers into memory instead of header blocks (header + proofs), speeds up the startup, and reduces normal operation memory usage by 80%.
 - Memory access is now synchronous to reduce use of locks and speed up block processing.
-- Chives fullnode, farmer and harvester now default to logging to chives.log in the chives-blockchain directory. This is configured in config.yaml and due to config.yaml changes it is recommended to edit the new template config instead of using older config.yaml’s from previous versions.
+- Chives fullnode, farmer and harvester now default to logging to chives.log in the chives-wallet directory. This is configured in config.yaml and due to config.yaml changes it is recommended to edit the new template config instead of using older config.yaml’s from previous versions.
 - uvloop is now an optional add on.
 - Harvester/farmer will not try to farm plots that they don’t have the key for.
 

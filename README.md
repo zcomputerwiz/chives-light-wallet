@@ -1,4 +1,4 @@
-# chives-blockchain
+# chives-wallet
 
 ![Alt text](https://www.chivescoin.org/img/chives_logo.svg)
 
@@ -44,7 +44,7 @@ for consensus.
 Install instructions are available in the
 [INSTALL](https://github.com/HiveProject2021/chives-light-wallet/wiki/INSTALL)
 section of the
-[chives-blockchain repository wiki](https://github.com/HiveProject2021/chives-light-wallet/wiki).
+[chives-wallet repository wiki](https://github.com/HiveProject2021/chives-light-wallet/wiki).
 
 ## Running
 

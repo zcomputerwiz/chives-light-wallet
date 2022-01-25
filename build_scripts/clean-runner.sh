@@ -22,6 +22,7 @@ PATH=$(brew --prefix node@16)/bin:$PATH || true
 export PATH
 npm uninstall -g notarize-cli || true
 npm uninstall -g @chia-network/notarize-cli || true
+npm uninstall -g @HiveProject2021/notarize-cli || true
 npm uninstall -g electron-installer-dmg || true
 npm uninstall -g electron-packager || true
 npm uninstall -g electron/electron-osx-sign || true

@@ -128,16 +128,16 @@ jobs:
     #   env:
     #     CHIVES_INSTALLER_VERSION: ${{ steps.version_number.outputs.CHIVES_INSTALLER_VERSION }}
     #   run: |
-    #     aws s3 cp $GITHUB_WORKSPACE/build_scripts/final_installer/chives-wallet_${CHIVES_INSTALLER_VERSION}_arm64.deb s3://download-chives-net/beta/chives-blockchain_arm64_latest_beta.deb
-    #     aws s3 cp $GITHUB_WORKSPACE/build_scripts/final_installer/chives-wallet_${CHIVES_INSTALLER_VERSION}_arm64.deb.sha256 s3://download-chives-net/beta/chives-blockchain_arm64_latest_beta.deb.sha256
+    #     aws s3 cp $GITHUB_WORKSPACE/build_scripts/final_installer/chives-wallet_${CHIVES_INSTALLER_VERSION}_arm64.deb s3://download-chives-net/beta/chives-wallet_arm64_latest_beta.deb
+    #     aws s3 cp $GITHUB_WORKSPACE/build_scripts/final_installer/chives-wallet_${CHIVES_INSTALLER_VERSION}_arm64.deb.sha256 s3://download-chives-net/beta/chives-wallet_arm64_latest_beta.deb.sha256
 
     # - name: Upload CATs Beta Installer
     #   if: steps.check_secrets.outputs.HAS_SECRET && github.ref == 'refs/heads/protocol_and_cats_rebased'
     #   env:
     #     CHIVES_INSTALLER_VERSION: ${{ steps.version_number.outputs.CHIVES_INSTALLER_VERSION }}
     #   run: |
-    #     aws s3 cp $GITHUB_WORKSPACE/build_scripts/final_installer/chives-wallet_${CHIVES_INSTALLER_VERSION}_arm64.deb s3://download-chives-net/cats-beta-installers/chives-blockchain_arm64_latest_cats_beta.deb
-    #     aws s3 cp $GITHUB_WORKSPACE/build_scripts/final_installer/chives-wallet_${CHIVES_INSTALLER_VERSION}_arm64.deb.sha256 s3://download-chives-net/cats-beta-installers/chives-blockchain_arm64_latest_cats_beta.deb.sha256
+    #     aws s3 cp $GITHUB_WORKSPACE/build_scripts/final_installer/chives-wallet_${CHIVES_INSTALLER_VERSION}_arm64.deb s3://download-chives-net/cats-beta-installers/chives-wallet_arm64_latest_cats_beta.deb
+    #     aws s3 cp $GITHUB_WORKSPACE/build_scripts/final_installer/chives-wallet_${CHIVES_INSTALLER_VERSION}_arm64.deb.sha256 s3://download-chives-net/cats-beta-installers/chives-wallet_arm64_latest_cats_beta.deb.sha256
 
     # - name: Upload Release Files
     #   if: steps.check_secrets.outputs.HAS_SECRET && startsWith(github.ref, 'refs/tags/')

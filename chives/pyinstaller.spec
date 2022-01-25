@@ -49,7 +49,7 @@ keyring_imports = collect_submodules("keyring.backends")
 # keyring uses entrypoints to read keyring.backends from metadata file entry_points.txt.
 keyring_datas = copy_metadata("keyring")[0]
 
-version_data = copy_metadata(get_distribution("chives-blockchain"))[0]
+version_data = copy_metadata(get_distribution("chives-wallet"))[0]
 
 block_cipher = None
 
@@ -112,18 +112,6 @@ if THIS_IS_WINDOWS:
         (
             "C:\\Windows\\System32\\vcruntime140_1.dll",
             ".",
-        ),
-        (
-            f"{ROOT}\\madmax\\chia_plot.exe",
-            "madmax"
-        ),
-        (
-            f"{ROOT}\\madmax\\chia_plot_k34.exe",
-            "madmax"
-        ),
-        (
-            f"{ROOT}\\bladebit\\bladebit.exe",
-            "bladebit"
         ),
     ]
 
