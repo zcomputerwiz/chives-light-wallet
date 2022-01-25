@@ -74,28 +74,28 @@ def configure(
             change_made = True
         else:
             print(f"Logging level not updated. Use one of: {levels}")
-    if enable_upnp:
+    if enable_upnp is not None:
         config["full_node"]["enable_upnp"] = str2bool(enable_upnp)
         if str2bool(enable_upnp):
             print("uPnP enabled")
         else:
             print("uPnP disabled")
         change_made = True
-    if set_outbound_peer_count:
+    if set_outbound_peer_count is not None:
         config["full_node"]["target_outbound_peer_count"] = int(set_outbound_peer_count)
         print("Target outbound peer count updated")
         change_made = True
-    if set_peer_count:
+    if set_peer_count is not None:
         config["full_node"]["target_peer_count"] = int(set_peer_count)
         print("Target peer count updated")
         change_made = True
-    if testnet:
+    if testnet is not None:
         if testnet == "true" or testnet == "t":
             print("Setting Testnet")
-            testnet_port = "58444"
+            testnet_port = "59699"
             testnet_introducer = "beta1_introducer.chivescoin.org"
-            testnet_dns_introducer = "dns-introducer-testnet7.chivescoin.org"
-            testnet = "testnet7"
+            testnet_dns_introducer = "dns-introducer-testnet10.chivescoin.org"
+            testnet = "testnet10"
             config["full_node"]["port"] = int(testnet_port)
             config["full_node"]["introducer_peer"]["port"] = int(testnet_port)
             config["farmer"]["full_node_peer"]["port"] = int(testnet_port)
@@ -119,7 +119,7 @@ def configure(
 
         elif testnet == "false" or testnet == "f":
             print("Setting Mainnet")
-            mainnet_port = "8444"
+            mainnet_port = "9699"
             mainnet_introducer = "introducer.chivescoin.org"
             mainnet_dns_introducer = "dns-introducer.chivescoin.org"
             net = "mainnet"
@@ -132,6 +132,7 @@ def configure(
             config["introducer"]["port"] = int(mainnet_port)
             config["full_node"]["introducer_peer"]["host"] = mainnet_introducer
             config["full_node"]["dns_servers"] = [mainnet_dns_introducer]
+            config["wallet"]["dns_servers"] = [mainnet_dns_introducer]
             config["selected_network"] = net
             config["harvester"]["selected_network"] = net
             config["pool"]["selected_network"] = net
@@ -146,7 +147,7 @@ def configure(
         else:
             print("Please choose True or False")
 
-    if peer_connect_timeout:
+    if peer_connect_timeout is not None:
         config["full_node"]["peer_connect_timeout"] = int(peer_connect_timeout)
         change_made = True
 
