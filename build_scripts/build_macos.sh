@@ -15,10 +15,14 @@ fi
 echo "Chives Installer Version is: $CHIVES_INSTALLER_VERSION"
 
 echo "Installing npm and electron packagers"
-cd npm_macos || exit
-npm ci
-PATH=$(npm bin):$PATH
-cd .. || exit
+npm install electron-installer-dmg -g
+# Pinning electron-packager and electron-osx-sign to known working versions
+# Current packager uses an old version of osx-sign, so if we install the newer sign package
+# things break
+npm install electron-packager@15.4.0 -g
+npm install electron-osx-sign@v0.5.0 -g
+npm install notarize-cli -g
+npm install lerna -g
 
 echo "Create dist/"
 sudo rm -rf dist
@@ -33,13 +37,13 @@ if [ "$LAST_EXIT_CODE" -ne 0 ]; then
 	echo >&2 "pyinstaller failed!"
 	exit $LAST_EXIT_CODE
 fi
-cp -r dist/daemon ../chives-blockchain-gui/packages/gui
+cp -r dist/daemon ../chives-blockchain-gui/packages/wallet
 cd .. || exit
 cd chives-blockchain-gui || exit
 
 echo "npm build"
 lerna clean -y
-npm ci
+npm install
 # Audit fix does not currently work with Lerna. See https://github.com/lerna/lerna/issues/1663
 # npm audit fix
 npm run build
@@ -50,15 +54,15 @@ if [ "$LAST_EXIT_CODE" -ne 0 ]; then
 fi
 
 # Change to the gui package
-cd packages/gui || exit
+cd packages/wallet || exit
 
 # sets the version for chives-wallet in package.json
 brew install jq
 cp package.json package.json.orig
 jq --arg VER "$CHIVES_INSTALLER_VERSION" '.version=$VER' package.json > temp.json && mv temp.json package.json
 
-electron-packager . Chives --asar.unpack="**/daemon/**" --platform=darwin \
---icon=src/assets/img/Chives.icns --overwrite --app-bundle-id=net.chives.blockchain \
+electron-packager . "Chives Light Wallet" --asar.unpack="**/daemon/**" --platform=darwin \
+--icon=src/assets/img/Chives.icns --overwrite --app-bundle-id=net.chives.wallet \
 --appVersion=$CHIVES_INSTALLER_VERSION
 LAST_EXIT_CODE=$?
 
@@ -71,7 +75,7 @@ if [ "$LAST_EXIT_CODE" -ne 0 ]; then
 fi
 
 if [ "$NOTARIZE" == true ]; then
-  electron-osx-sign Chives-darwin-x64/Chives.app --platform=darwin \
+  electron-osx-sign Chives\ Light\ Wallet-darwin-x64/Chives\ Light\ Wallet.app --platform=darwin \
   --hardened-runtime=true --provisioning-profile=chivesblockchain.provisionprofile \
   --entitlements=entitlements.mac.plist --entitlements-inherit=entitlements.mac.plist \
   --no-gatekeeper-assess
@@ -82,13 +86,13 @@ if [ "$LAST_EXIT_CODE" -ne 0 ]; then
 	exit $LAST_EXIT_CODE
 fi
 
-mv Chives-darwin-x64 ../../../build_scripts/dist/
+mv Chives\ Light\ Wallet-darwin-x64 ../../../build_scripts/dist/
 cd ../../../build_scripts || exit
 
-DMG_NAME="Chives-$CHIVES_INSTALLER_VERSION.dmg"
+DMG_NAME="Chives-Wallet-$CHIVES_INSTALLER_VERSION.dmg"
 echo "Create $DMG_NAME"
 mkdir final_installer
-electron-installer-dmg dist/Chives-darwin-x64/Chives.app Chives-$CHIVES_INSTALLER_VERSION \
+electron-installer-dmg dist/Chives\ Light\ Wallet-darwin-x64/Chives\ Light\ Wallet.app Chives-Wallet-$CHIVES_INSTALLER_VERSION \
 --overwrite --out final_installer
 LAST_EXIT_CODE=$?
 if [ "$LAST_EXIT_CODE" -ne 0 ]; then
@@ -99,7 +103,7 @@ fi
 if [ "$NOTARIZE" == true ]; then
 	echo "Notarize $DMG_NAME on ci"
 	cd final_installer || exit
-  notarize-cli --file=$DMG_NAME --bundle-id net.chives.blockchain \
+  notarize-cli --file=$DMG_NAME --bundle-id net.chives.wallet \
 	--username "$APPLE_NOTARIZE_USERNAME" --password "$APPLE_NOTARIZE_PASSWORD"
   echo "Notarization step complete"
 else
@@ -110,7 +114,7 @@ fi
 #
 # Ask for username and password. password should be an app specific password.
 # Generate app specific password https://support.apple.com/en-us/HT204397
-# xcrun altool --notarize-app -f Chives-0.1.X.dmg --primary-bundle-id net.chives.blockchain -u username -p password
+# xcrun altool --notarize-app -f Chives-0.1.X.dmg --primary-bundle-id net.chives.wallet -u username -p password
 # xcrun altool --notarize-app; -should return REQUEST-ID, use it in next command
 #
 # Wait until following command return a success message".

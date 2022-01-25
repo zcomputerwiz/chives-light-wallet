@@ -16,8 +16,13 @@ rm chives-blockchain-gui/temp.json || true
 ( cd "$PWD/chives-blockchain-gui" && git checkout HEAD -- package-lock.json ) || true
 cd "$PWD" || true
 
-# Clean up old globally installed node_modules that might conflict with the current build
-rm -rf /opt/homebrew/lib/node_modules || true
-
-# Clean up any installed versions of node so we can start fresh
-brew list | grep "^node\@\|^node$" | xargs -L1 brew uninstall || true
+# Do our best to get rid of any globally installed notarize-cli versions so the version in the current build script is
+# installed without conflicting with the other version that might be installed
+PATH=$(brew --prefix node@16)/bin:$PATH || true
+export PATH
+npm uninstall -g notarize-cli || true
+npm uninstall -g @chia-network/notarize-cli || true
+npm uninstall -g @HiveProject2021/notarize-cli || true
+npm uninstall -g electron-installer-dmg || true
+npm uninstall -g electron-packager || true
+npm uninstall -g electron/electron-osx-sign || true

@@ -25,11 +25,9 @@ fi
 echo "Chives Installer Version is: $CHIVES_INSTALLER_VERSION"
 
 echo "Installing npm and electron packagers"
-cd npm_linux_rpm || exit
-npm ci
-GLOBAL_NPM_ROOT=$(pwd)/node_modules
-PATH=$(npm bin):$PATH
-cd .. || exit
+npm install electron-packager -g
+npm install electron-installer-redhat -g
+npm install lerna -g
 
 echo "Create dist/"
 rm -rf dist
@@ -45,13 +43,13 @@ if [ "$LAST_EXIT_CODE" -ne 0 ]; then
 	exit $LAST_EXIT_CODE
 fi
 
-cp -r dist/daemon ../chives-blockchain-gui/packages/gui
+cp -r dist/daemon ../chives-blockchain-gui/packages/wallet
 cd .. || exit
 cd chives-blockchain-gui || exit
 
 echo "npm build"
 lerna clean -y
-npm ci
+npm install
 # Audit fix does not currently work with Lerna. See https://github.com/lerna/lerna/issues/1663
 # npm audit fix
 npm run build
@@ -62,14 +60,14 @@ if [ "$LAST_EXIT_CODE" -ne 0 ]; then
 fi
 
 # Change to the gui package
-cd packages/gui || exit
+cd packages/wallet || exit
 
 # sets the version for chives-wallet in package.json
 cp package.json package.json.orig
 jq --arg VER "$CHIVES_INSTALLER_VERSION" '.version=$VER' package.json > temp.json && mv temp.json package.json
 
 electron-packager . chives-wallet --asar.unpack="**/daemon/**" --platform=linux \
---icon=src/assets/img/Chives.icns --overwrite --app-bundle-id=net.chives.blockchain \
+--icon=src/assets/img/Chives.icns --overwrite --app-bundle-id=net.chives.wallet \
 --appVersion=$CHIVES_INSTALLER_VERSION --executable-name=chives-wallet
 LAST_EXIT_CODE=$?
 
@@ -87,19 +85,22 @@ cd ../../../build_scripts || exit
 if [ "$REDHAT_PLATFORM" = "x86_64" ]; then
 	echo "Create chives-wallet-$CHIVES_INSTALLER_VERSION.rpm"
 
-	# Disables build links from the generated rpm so that we dont conflict with other packages. See https://github.com/Chia-Network/chia-blockchain/issues/3846
+	# shellcheck disable=SC2046
+	NODE_ROOT="$(dirname $(dirname $(which node)))"
+
+	# Disables build links from the generated rpm so that we dont conflict with other packages. See https://github.com/HiveProject2021/chives-light-wallet/issues/3846
 	# shellcheck disable=SC2086
-	sed -i '1s/^/%define _build_id_links none\n%global _enable_debug_package 0\n%global debug_package %{nil}\n%global __os_install_post \/usr\/lib\/rpm\/brp-compress %{nil}\n/' "$GLOBAL_NPM_ROOT/electron-installer-redhat/resources/spec.ejs"
+	sed -i '1s/^/%define _build_id_links none\n%global _enable_debug_package 0\n%global debug_package %{nil}\n%global __os_install_post \/usr\/lib\/rpm\/brp-compress %{nil}\n/' "$NODE_ROOT/lib/node_modules/electron-installer-redhat/resources/spec.ejs"
 
 	# Use attr feature of RPM to set the chrome-sandbox permissions
 	# adds a %attr line after the %files line
 	# The location is based on the existing location inside spec.ej
-	sed -i '/^%files/a %attr(4755, root, root) /usr/lib/<%= name %>/chrome-sandbox' "$GLOBAL_NPM_ROOT/electron-installer-redhat/resources/spec.ejs"
+	sed -i '/^%files/a %attr(4755, root, root) /usr/lib/<%= name %>/chrome-sandbox' "$NODE_ROOT/lib/node_modules/electron-installer-redhat/resources/spec.ejs"
 
 	# Updates the requirements for building an RPM on Centos 7 to allow older version of rpm-build and not use the boolean dependencies
 	# See https://github.com/electron-userland/electron-installer-redhat/issues/157
 	# shellcheck disable=SC2086
-	sed -i "s#throw new Error('Please upgrade to RPM 4.13.*#console.warn('You are using RPM < 4.13')\n      return { requires: [ 'gtk3', 'libnotify', 'nss', 'libXScrnSaver', 'libXtst', 'xdg-utils', 'at-spi2-core', 'libdrm', 'mesa-libgbm', 'libxcb' ] }#g" $GLOBAL_NPM_ROOT/electron-installer-redhat/src/dependencies.js
+	sed -i "s#throw new Error('Please upgrade to RPM 4.13.*#console.warn('You are using RPM < 4.13')\n      return { requires: [ 'gtk3', 'libnotify', 'nss', 'libXScrnSaver', 'libXtst', 'xdg-utils', 'at-spi2-core', 'libdrm', 'mesa-libgbm', 'libxcb' ] }#g" $NODE_ROOT/lib/node_modules/electron-installer-redhat/src/dependencies.js
 
   electron-installer-redhat --src dist/$DIR_NAME/ --dest final_installer/ \
   --arch "$REDHAT_PLATFORM" --options.version $CHIVES_INSTALLER_VERSION \
