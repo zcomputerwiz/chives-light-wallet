@@ -2,9 +2,9 @@ import zlib
 
 from typing import List
 
-from chia.wallet.puzzles.load_clvm import load_clvm
-from chia.wallet.puzzles import p2_delegated_puzzle_or_hidden_puzzle as standard_puzzle
-from chia.wallet.puzzles.cat_loader import CAT_MOD
+from chives.wallet.puzzles.load_clvm import load_clvm
+from chives.wallet.puzzles import p2_delegated_puzzle_or_hidden_puzzle as standard_puzzle
+from chives.wallet.puzzles.cat_loader import CAT_MOD
 
 OFFER_MOD = load_clvm("settlement_payments.clvm")
 

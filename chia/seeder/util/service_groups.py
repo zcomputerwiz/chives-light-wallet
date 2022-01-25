@@ -1,9 +1,9 @@
 from typing import KeysView, Generator
 
 SERVICES_FOR_GROUP = {
-    "all": "chia_seeder_crawler chia_seeder_server".split(),
-    "crawler": "chia_seeder_crawler".split(),
-    "server": "chia_seeder_server".split(),
+    "all": "chives_seeder_crawler chives_seeder_server".split(),
+    "crawler": "chives_seeder_crawler".split(),
+    "server": "chives_seeder_server".split(),
 }
 
 

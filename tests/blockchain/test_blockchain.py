@@ -11,36 +11,36 @@ import pytest
 from blspy import AugSchemeMPL, G2Element
 from clvm.casts import int_to_bytes
 
-from chia.consensus.block_rewards import calculate_base_farmer_reward
-from chia.consensus.blockchain import ReceiveBlockResult, Blockchain
-from chia.consensus.coinbase import create_farmer_coin
-from chia.consensus.pot_iterations import is_overflow_block
-from chia.full_node.bundle_tools import detect_potential_template_generator
-from chia.types.blockchain_format.classgroup import ClassgroupElement
-from chia.types.blockchain_format.coin import Coin
-from chia.types.blockchain_format.foliage import TransactionsInfo
-from chia.types.blockchain_format.program import SerializedProgram
-from chia.types.blockchain_format.sized_bytes import bytes32
-from chia.types.blockchain_format.slots import InfusedChallengeChainSubSlot
-from chia.types.blockchain_format.vdf import VDFInfo, VDFProof
-from chia.types.condition_opcodes import ConditionOpcode
-from chia.types.condition_with_args import ConditionWithArgs
-from chia.types.end_of_slot_bundle import EndOfSubSlotBundle
-from chia.types.full_block import FullBlock
-from chia.types.generator_types import BlockGenerator
-from chia.types.spend_bundle import SpendBundle
-from chia.types.unfinished_block import UnfinishedBlock
+from chives.consensus.block_rewards import calculate_base_farmer_reward
+from chives.consensus.blockchain import ReceiveBlockResult, Blockchain
+from chives.consensus.coinbase import create_farmer_coin
+from chives.consensus.pot_iterations import is_overflow_block
+from chives.full_node.bundle_tools import detect_potential_template_generator
+from chives.types.blockchain_format.classgroup import ClassgroupElement
+from chives.types.blockchain_format.coin import Coin
+from chives.types.blockchain_format.foliage import TransactionsInfo
+from chives.types.blockchain_format.program import SerializedProgram
+from chives.types.blockchain_format.sized_bytes import bytes32
+from chives.types.blockchain_format.slots import InfusedChallengeChainSubSlot
+from chives.types.blockchain_format.vdf import VDFInfo, VDFProof
+from chives.types.condition_opcodes import ConditionOpcode
+from chives.types.condition_with_args import ConditionWithArgs
+from chives.types.end_of_slot_bundle import EndOfSubSlotBundle
+from chives.types.full_block import FullBlock
+from chives.types.generator_types import BlockGenerator
+from chives.types.spend_bundle import SpendBundle
+from chives.types.unfinished_block import UnfinishedBlock
 from tests.block_tools import create_block_tools_async, get_vdf_info_and_proof
-from chia.util.errors import Err
-from chia.util.hash import std_hash
-from chia.util.ints import uint8, uint64, uint32
-from chia.util.merkle_set import MerkleSet
-from chia.util.recursive_replace import recursive_replace
+from chives.util.errors import Err
+from chives.util.hash import std_hash
+from chives.util.ints import uint8, uint64, uint32
+from chives.util.merkle_set import MerkleSet
+from chives.util.recursive_replace import recursive_replace
 from tests.wallet_tools import WalletTool
 from tests.setup_nodes import bt, test_constants
 from tests.util.blockchain import create_blockchain
 from tests.util.keyring import TempKeyring
-from chia.wallet.puzzles.p2_delegated_puzzle_or_hidden_puzzle import (
+from chives.wallet.puzzles.p2_delegated_puzzle_or_hidden_puzzle import (
     DEFAULT_HIDDEN_PUZZLE_HASH,
     calculate_synthetic_secret_key,
 )

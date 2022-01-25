@@ -1,9 +1,9 @@
 import socket
 from ipaddress import ip_address, IPv4Network, IPv6Network
 from typing import Iterable, List, Tuple, Union, Any, Optional
-from chia.server.outbound_message import NodeType
-from chia.types.peer_info import PeerInfo
-from chia.util.ints import uint16
+from chives.server.outbound_message import NodeType
+from chives.types.peer_info import PeerInfo
+from chives.util.ints import uint16
 
 
 def is_in_network(peer_host: str, networks: Iterable[Union[IPv4Network, IPv6Network]]) -> bool:
@@ -20,27 +20,27 @@ def is_localhost(peer_host: str) -> bool:
 
 def class_for_type(type: NodeType) -> Any:
     if type is NodeType.FULL_NODE:
-        from chia.full_node.full_node_api import FullNodeAPI
+        from chives.full_node.full_node_api import FullNodeAPI
 
         return FullNodeAPI
     elif type is NodeType.WALLET:
-        from chia.wallet.wallet_node_api import WalletNodeAPI
+        from chives.wallet.wallet_node_api import WalletNodeAPI
 
         return WalletNodeAPI
     elif type is NodeType.INTRODUCER:
-        from chia.introducer.introducer_api import IntroducerAPI
+        from chives.introducer.introducer_api import IntroducerAPI
 
         return IntroducerAPI
     elif type is NodeType.TIMELORD:
-        from chia.timelord.timelord_api import TimelordAPI
+        from chives.timelord.timelord_api import TimelordAPI
 
         return TimelordAPI
     elif type is NodeType.FARMER:
-        from chia.farmer.farmer_api import FarmerAPI
+        from chives.farmer.farmer_api import FarmerAPI
 
         return FarmerAPI
     elif type is NodeType.HARVESTER:
-        from chia.harvester.harvester_api import HarvesterAPI
+        from chives.harvester.harvester_api import HarvesterAPI
 
         return HarvesterAPI
     raise ValueError("No class for type")

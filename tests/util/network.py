@@ -1,5 +1,5 @@
 import pytest
-from chia.util.network import get_host_addr
+from chives.util.network import get_host_addr
 
 
 class TestNetwork:

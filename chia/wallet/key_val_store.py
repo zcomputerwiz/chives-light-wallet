@@ -2,8 +2,8 @@ from typing import Any
 
 import aiosqlite
 
-from chia.util.db_wrapper import DBWrapper
-from chia.util.streamable import Streamable
+from chives.util.db_wrapper import DBWrapper
+from chives.util.streamable import Streamable
 
 
 class KeyValStore:

@@ -11,54 +11,54 @@ import aiosqlite
 from blspy import G1Element, PrivateKey
 from chiabip158 import PyBIP158
 
-from chia.consensus.coinbase import pool_parent_id, farmer_parent_id
-from chia.consensus.constants import ConsensusConstants
-from chia.pools.pool_puzzles import SINGLETON_LAUNCHER_HASH, solution_to_pool_state
-from chia.pools.pool_wallet import PoolWallet
-from chia.protocols import wallet_protocol
-from chia.protocols.wallet_protocol import PuzzleSolutionResponse, RespondPuzzleSolution, CoinState
-from chia.types.blockchain_format.coin import Coin
-from chia.types.blockchain_format.program import Program
-from chia.types.blockchain_format.sized_bytes import bytes32
-from chia.types.coin_spend import CoinSpend
-from chia.types.full_block import FullBlock
-from chia.types.header_block import HeaderBlock
-from chia.types.mempool_inclusion_status import MempoolInclusionStatus
-from chia.types.weight_proof import WeightProof
-from chia.util.byte_types import hexstr_to_bytes
-from chia.util.db_wrapper import DBWrapper
-from chia.util.errors import Err
-from chia.util.ints import uint32, uint64, uint128, uint8
-from chia.util.db_synchronous import db_synchronous_on
-from chia.wallet.cat_wallet.cat_utils import match_cat_puzzle, construct_cat_puzzle
-from chia.wallet.cat_wallet.cat_wallet import CATWallet
-from chia.wallet.cat_wallet.cat_constants import DEFAULT_CATS
-from chia.wallet.derivation_record import DerivationRecord
-from chia.wallet.derive_keys import master_sk_to_wallet_sk, master_sk_to_wallet_sk_unhardened
-from chia.wallet.key_val_store import KeyValStore
-from chia.wallet.puzzles.cat_loader import CAT_MOD
-from chia.wallet.rl_wallet.rl_wallet import RLWallet
-from chia.wallet.settings.user_settings import UserSettings
-from chia.wallet.trade_manager import TradeManager
-from chia.wallet.transaction_record import TransactionRecord
-from chia.wallet.util.transaction_type import TransactionType
-from chia.wallet.util.wallet_types import WalletType
-from chia.wallet.wallet import Wallet
-from chia.wallet.wallet_action import WalletAction
-from chia.wallet.wallet_action_store import WalletActionStore
-from chia.wallet.wallet_blockchain import WalletBlockchain
-from chia.wallet.wallet_coin_record import WalletCoinRecord
-from chia.wallet.wallet_coin_store import WalletCoinStore
-from chia.wallet.wallet_info import WalletInfo
-from chia.wallet.wallet_interested_store import WalletInterestedStore
-from chia.wallet.wallet_pool_store import WalletPoolStore
-from chia.wallet.wallet_puzzle_store import WalletPuzzleStore
-from chia.wallet.wallet_sync_store import WalletSyncStore
-from chia.wallet.wallet_transaction_store import WalletTransactionStore
-from chia.wallet.wallet_user_store import WalletUserStore
-from chia.server.server import ChiaServer
-from chia.wallet.did_wallet.did_wallet import DIDWallet
-from chia.wallet.wallet_weight_proof_handler import WalletWeightProofHandler
+from chives.consensus.coinbase import pool_parent_id, farmer_parent_id
+from chives.consensus.constants import ConsensusConstants
+from chives.pools.pool_puzzles import SINGLETON_LAUNCHER_HASH, solution_to_pool_state
+from chives.pools.pool_wallet import PoolWallet
+from chives.protocols import wallet_protocol
+from chives.protocols.wallet_protocol import PuzzleSolutionResponse, RespondPuzzleSolution, CoinState
+from chives.types.blockchain_format.coin import Coin
+from chives.types.blockchain_format.program import Program
+from chives.types.blockchain_format.sized_bytes import bytes32
+from chives.types.coin_spend import CoinSpend
+from chives.types.full_block import FullBlock
+from chives.types.header_block import HeaderBlock
+from chives.types.mempool_inclusion_status import MempoolInclusionStatus
+from chives.types.weight_proof import WeightProof
+from chives.util.byte_types import hexstr_to_bytes
+from chives.util.db_wrapper import DBWrapper
+from chives.util.errors import Err
+from chives.util.ints import uint32, uint64, uint128, uint8
+from chives.util.db_synchronous import db_synchronous_on
+from chives.wallet.cat_wallet.cat_utils import match_cat_puzzle, construct_cat_puzzle
+from chives.wallet.cat_wallet.cat_wallet import CATWallet
+from chives.wallet.cat_wallet.cat_constants import DEFAULT_CATS
+from chives.wallet.derivation_record import DerivationRecord
+from chives.wallet.derive_keys import master_sk_to_wallet_sk, master_sk_to_wallet_sk_unhardened
+from chives.wallet.key_val_store import KeyValStore
+from chives.wallet.puzzles.cat_loader import CAT_MOD
+from chives.wallet.rl_wallet.rl_wallet import RLWallet
+from chives.wallet.settings.user_settings import UserSettings
+from chives.wallet.trade_manager import TradeManager
+from chives.wallet.transaction_record import TransactionRecord
+from chives.wallet.util.transaction_type import TransactionType
+from chives.wallet.util.wallet_types import WalletType
+from chives.wallet.wallet import Wallet
+from chives.wallet.wallet_action import WalletAction
+from chives.wallet.wallet_action_store import WalletActionStore
+from chives.wallet.wallet_blockchain import WalletBlockchain
+from chives.wallet.wallet_coin_record import WalletCoinRecord
+from chives.wallet.wallet_coin_store import WalletCoinStore
+from chives.wallet.wallet_info import WalletInfo
+from chives.wallet.wallet_interested_store import WalletInterestedStore
+from chives.wallet.wallet_pool_store import WalletPoolStore
+from chives.wallet.wallet_puzzle_store import WalletPuzzleStore
+from chives.wallet.wallet_sync_store import WalletSyncStore
+from chives.wallet.wallet_transaction_store import WalletTransactionStore
+from chives.wallet.wallet_user_store import WalletUserStore
+from chives.server.server import ChivesServer
+from chives.wallet.did_wallet.did_wallet import DIDWallet
+from chives.wallet.wallet_weight_proof_handler import WalletWeightProofHandler
 
 
 def get_balance_from_coin_records(coin_records: Set[WalletCoinRecord]) -> uint128:
@@ -112,7 +112,7 @@ class WalletStateManager:
     sync_store: WalletSyncStore
     interested_store: WalletInterestedStore
     weight_proof_handler: WalletWeightProofHandler
-    server: ChiaServer
+    server: ChivesServer
     root_path: Path
     wallet_node: Any
     pool_store: WalletPoolStore
@@ -124,7 +124,7 @@ class WalletStateManager:
         config: Dict,
         db_path: Path,
         constants: ConsensusConstants,
-        server: ChiaServer,
+        server: ChivesServer,
         root_path: Path,
         subscribe_to_new_puzzle_hash,
         get_coin_state,

@@ -6,23 +6,23 @@ import signal
 from sys import platform
 from typing import Any, Callable, List, Optional, Tuple
 
-from chia.daemon.server import singleton, service_launch_lock_path
-from chia.server.ssl_context import chia_ssl_ca_paths, private_ssl_ca_paths
+from chives.daemon.server import singleton, service_launch_lock_path
+from chives.server.ssl_context import chives_ssl_ca_paths, private_ssl_ca_paths
 
 try:
     import uvloop
 except ImportError:
     uvloop = None
 
-from chia.rpc.rpc_server import start_rpc_server
-from chia.server.outbound_message import NodeType
-from chia.server.server import ChiaServer
-from chia.server.upnp import UPnP
-from chia.types.peer_info import PeerInfo
-from chia.util.chia_logging import initialize_logging
-from chia.util.config import load_config, load_config_cli
-from chia.util.setproctitle import setproctitle
-from chia.util.ints import uint16
+from chives.rpc.rpc_server import start_rpc_server
+from chives.server.outbound_message import NodeType
+from chives.server.server import ChivesServer
+from chives.server.upnp import UPnP
+from chives.types.peer_info import PeerInfo
+from chives.util.chives_logging import initialize_logging
+from chives.util.config import load_config, load_config_cli
+from chives.util.setproctitle import setproctitle
+from chives.util.ints import uint16
 
 from .reconnect_task import start_reconnect_task
 
@@ -64,7 +64,7 @@ class Service:
         self._rpc_close_task: Optional[asyncio.Task] = None
         self._network_id: str = network_id
 
-        proctitle_name = f"chia_{service_name}"
+        proctitle_name = f"chives_{service_name}"
         setproctitle(proctitle_name)
         self._log = logging.getLogger(service_name)
 
@@ -76,11 +76,11 @@ class Service:
 
         self._rpc_info = rpc_info
         private_ca_crt, private_ca_key = private_ssl_ca_paths(root_path, self.config)
-        chia_ca_crt, chia_ca_key = chia_ssl_ca_paths(root_path, self.config)
+        chives_ca_crt, chives_ca_key = chives_ssl_ca_paths(root_path, self.config)
         inbound_rlp = self.config.get("inbound_rate_limit_percent")
         outbound_rlp = self.config.get("outbound_rate_limit_percent")
         assert inbound_rlp and outbound_rlp
-        self._server = ChiaServer(
+        self._server = ChivesServer(
             advertised_port,
             node,
             peer_api,
@@ -92,7 +92,7 @@ class Service:
             root_path,
             service_config,
             (private_ca_crt, private_ca_key),
-            (chia_ca_crt, chia_ca_key),
+            (chives_ca_crt, chives_ca_key),
             name=f"{service_name}_server",
         )
         f = getattr(node, "set_server", None)
@@ -228,7 +228,7 @@ class Service:
 
         self._log.info("Waiting for socket to be closed (if opened)")
 
-        self._log.info("Waiting for ChiaServer to be closed")
+        self._log.info("Waiting for ChivesServer to be closed")
         await self._server.await_closed()
 
         if self._rpc_close_task:
