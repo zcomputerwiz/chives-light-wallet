@@ -5,10 +5,10 @@ from typing import List
 
 from blspy import G1Element
 
-from chia.types.blockchain_format.sized_bytes import bytes32
-from chia.util.byte_types import hexstr_to_bytes
-from chia.util.config import load_config, save_config
-from chia.util.streamable import Streamable, streamable
+from chives.types.blockchain_format.sized_bytes import bytes32
+from chives.util.byte_types import hexstr_to_bytes
+from chives.util.config import load_config, save_config
+from chives.util.streamable import Streamable, streamable
 
 """
 Config example

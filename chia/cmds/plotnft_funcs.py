@@ -10,22 +10,22 @@ import time
 from pprint import pprint
 from typing import List, Dict, Optional, Callable
 
-from chia.cmds.units import units
-from chia.cmds.wallet_funcs import print_balance, wallet_coin_unit
-from chia.pools.pool_wallet_info import PoolWalletInfo, PoolSingletonState
-from chia.protocols.pool_protocol import POOL_PROTOCOL_VERSION
-from chia.rpc.farmer_rpc_client import FarmerRpcClient
-from chia.rpc.wallet_rpc_client import WalletRpcClient
-from chia.types.blockchain_format.sized_bytes import bytes32
-from chia.server.server import ssl_context_for_root
-from chia.ssl.create_ssl import get_mozilla_ca_crt
-from chia.util.bech32m import encode_puzzle_hash
-from chia.util.byte_types import hexstr_to_bytes
-from chia.util.config import load_config
-from chia.util.default_root import DEFAULT_ROOT_PATH
-from chia.util.ints import uint16, uint32, uint64
-from chia.wallet.transaction_record import TransactionRecord
-from chia.wallet.util.wallet_types import WalletType
+from chives.cmds.units import units
+from chives.cmds.wallet_funcs import print_balance, wallet_coin_unit
+from chives.pools.pool_wallet_info import PoolWalletInfo, PoolSingletonState
+from chives.protocols.pool_protocol import POOL_PROTOCOL_VERSION
+from chives.rpc.farmer_rpc_client import FarmerRpcClient
+from chives.rpc.wallet_rpc_client import WalletRpcClient
+from chives.types.blockchain_format.sized_bytes import bytes32
+from chives.server.server import ssl_context_for_root
+from chives.ssl.create_ssl import get_mozilla_ca_crt
+from chives.util.bech32m import encode_puzzle_hash
+from chives.util.byte_types import hexstr_to_bytes
+from chives.util.config import load_config
+from chives.util.default_root import DEFAULT_ROOT_PATH
+from chives.util.ints import uint16, uint32, uint64
+from chives.wallet.transaction_record import TransactionRecord
+from chives.wallet.util.wallet_types import WalletType
 
 
 async def create_pool_args(pool_url: str) -> Dict:
@@ -55,7 +55,7 @@ async def create(args: dict, wallet_client: WalletRpcClient, fingerprint: int) -
     state = args["state"]
     prompt = not args.get("yes", False)
     fee = Decimal(args.get("fee", 0))
-    fee_mojos = uint64(int(fee * units["chia"]))
+    fee_mojos = uint64(int(fee * units["chives"]))
 
     target_puzzle_hash: Optional[bytes32]
     # Could use initial_pool_state_from_dict to simplify
@@ -100,7 +100,7 @@ async def create(args: dict, wallet_client: WalletRpcClient, fingerprint: int) -
                 tx = await wallet_client.get_transaction(str(1), tx_record.name)
                 if len(tx.sent_to) > 0:
                     print(f"Transaction submitted to nodes: {tx.sent_to}")
-                    print(f"Do chia wallet get_transaction -f {fingerprint} -tx 0x{tx_record.name} to get status")
+                    print(f"Do chives wallet get_transaction -f {fingerprint} -tx 0x{tx_record.name} to get status")
                     return None
         except Exception as e:
             print(f"Error creating plot NFT: {e}")
@@ -194,7 +194,7 @@ async def show(args: dict, wallet_client: WalletRpcClient, fingerprint: int) -> 
         if isinstance(e, aiohttp.ClientConnectorError):
             print(
                 f"Connection error. Check if farmer is running at {farmer_rpc_port}."
-                f" You can run the farmer by:\n    chia start farmer-only"
+                f" You can run the farmer by:\n    chives start farmer-only"
             )
         else:
             print(f"Exception from 'wallet' {e}")
@@ -258,7 +258,7 @@ async def get_login_link(launcher_id_str: str) -> None:
         if isinstance(e, aiohttp.ClientConnectorError):
             print(
                 f"Connection error. Check if farmer is running at {farmer_rpc_port}."
-                f" You can run the farmer by:\n    chia start farmer-only"
+                f" You can run the farmer by:\n    chives start farmer-only"
             )
         else:
             print(f"Exception from 'farmer' {e}")
@@ -285,7 +285,7 @@ async def submit_tx_with_confirmation(
                 tx = await wallet_client.get_transaction(str(1), tx_record.name)
                 if len(tx.sent_to) > 0:
                     print(f"Transaction submitted to nodes: {tx.sent_to}")
-                    print(f"Do chia wallet get_transaction -f {fingerprint} -tx 0x{tx_record.name} to get status")
+                    print(f"Do chives wallet get_transaction -f {fingerprint} -tx 0x{tx_record.name} to get status")
                     return None
         except Exception as e:
             print(f"Error performing operation on Plot NFT -f {fingerprint} wallet id: {wallet_id}: {e}")
@@ -298,7 +298,7 @@ async def join_pool(args: dict, wallet_client: WalletRpcClient, fingerprint: int
     enforce_https = config["full_node"]["selected_network"] == "mainnet"
     pool_url: str = args["pool_url"]
     fee = Decimal(args.get("fee", 0))
-    fee_mojos = uint64(int(fee * units["chia"]))
+    fee_mojos = uint64(int(fee * units["chives"]))
 
     if enforce_https and not pool_url.startswith("https://"):
         print(f"Pool URLs must be HTTPS on mainnet {pool_url}. Aborting.")
@@ -342,7 +342,7 @@ async def self_pool(args: dict, wallet_client: WalletRpcClient, fingerprint: int
     wallet_id = args.get("id", None)
     prompt = not args.get("yes", False)
     fee = Decimal(args.get("fee", 0))
-    fee_mojos = uint64(int(fee * units["chia"]))
+    fee_mojos = uint64(int(fee * units["chives"]))
 
     msg = f"Will start self-farming with Plot NFT on wallet id {wallet_id} fingerprint {fingerprint}."
     func = functools.partial(wallet_client.pw_self_pool, wallet_id, fee_mojos)
@@ -365,7 +365,7 @@ async def inspect_cmd(args: dict, wallet_client: WalletRpcClient, fingerprint: i
 async def claim_cmd(args: dict, wallet_client: WalletRpcClient, fingerprint: int) -> None:
     wallet_id = args.get("id", None)
     fee = Decimal(args.get("fee", 0))
-    fee_mojos = uint64(int(fee * units["chia"]))
+    fee_mojos = uint64(int(fee * units["chives"]))
     msg = f"\nWill claim rewards for wallet ID: {wallet_id}."
     func = functools.partial(
         wallet_client.pw_absorb_rewards,

@@ -2,23 +2,23 @@ from dataclasses import dataclass
 from typing import List, Optional, Dict, Set, Tuple
 from blspy import G2Element
 
-from chia.types.blockchain_format.sized_bytes import bytes32
-from chia.types.blockchain_format.coin import Coin
-from chia.types.blockchain_format.program import Program
-from chia.types.announcement import Announcement
-from chia.types.coin_spend import CoinSpend
-from chia.types.spend_bundle import SpendBundle
-from chia.util.ints import uint64
-from chia.wallet.cat_wallet.cat_utils import (
+from chives.types.blockchain_format.sized_bytes import bytes32
+from chives.types.blockchain_format.coin import Coin
+from chives.types.blockchain_format.program import Program
+from chives.types.announcement import Announcement
+from chives.types.coin_spend import CoinSpend
+from chives.types.spend_bundle import SpendBundle
+from chives.util.ints import uint64
+from chives.wallet.cat_wallet.cat_utils import (
     CAT_MOD,
     SpendableCAT,
     construct_cat_puzzle,
     match_cat_puzzle,
     unsigned_spend_bundle_for_spendable_cats,
 )
-from chia.wallet.lineage_proof import LineageProof
-from chia.wallet.puzzles.load_clvm import load_clvm
-from chia.wallet.payment import Payment
+from chives.wallet.lineage_proof import LineageProof
+from chives.wallet.puzzles.load_clvm import load_clvm
+from chives.wallet.payment import Payment
 
 OFFER_MOD = load_clvm("settlement_payments.clvm")
 ZERO_32 = bytes32([0] * 32)

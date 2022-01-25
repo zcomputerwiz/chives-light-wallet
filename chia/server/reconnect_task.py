@@ -2,12 +2,12 @@ import asyncio
 
 from typing import Optional
 
-from chia.server.server import ChiaServer
-from chia.types.peer_info import PeerInfo
-from chia.util.network import get_host_addr
+from chives.server.server import ChivesServer
+from chives.types.peer_info import PeerInfo
+from chives.util.network import get_host_addr
 
 
-def start_reconnect_task(server: ChiaServer, peer_info_arg: PeerInfo, log, auth: bool, prefer_ipv6: Optional[bool]):
+def start_reconnect_task(server: ChivesServer, peer_info_arg: PeerInfo, log, auth: bool, prefer_ipv6: Optional[bool]):
     """
     Start a background task that checks connection and reconnects periodically to a peer.
     """

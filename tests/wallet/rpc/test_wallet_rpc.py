@@ -3,33 +3,33 @@ from typing import Optional
 
 from blspy import G2Element
 
-from chia.types.coin_record import CoinRecord
-from chia.types.coin_spend import CoinSpend
-from chia.types.spend_bundle import SpendBundle
-from chia.util.config import load_config, save_config
+from chives.types.coin_record import CoinRecord
+from chives.types.coin_spend import CoinSpend
+from chives.types.spend_bundle import SpendBundle
+from chives.util.config import load_config, save_config
 from operator import attrgetter
 import logging
 
 import pytest
 
-from chia.consensus.block_rewards import calculate_base_farmer_reward, calculate_pool_reward
-from chia.rpc.full_node_rpc_api import FullNodeRpcApi
-from chia.rpc.full_node_rpc_client import FullNodeRpcClient
-from chia.rpc.rpc_server import start_rpc_server
-from chia.rpc.wallet_rpc_api import WalletRpcApi
-from chia.rpc.wallet_rpc_client import WalletRpcClient
-from chia.simulator.simulator_protocol import FarmNewBlockProtocol
-from chia.types.announcement import Announcement
-from chia.types.blockchain_format.program import Program
-from chia.types.peer_info import PeerInfo
-from chia.util.bech32m import encode_puzzle_hash
-from chia.consensus.coinbase import create_puzzlehash_for_pk
-from chia.util.hash import std_hash
-from chia.wallet.derive_keys import master_sk_to_wallet_sk
-from chia.util.ints import uint16, uint32, uint64
-from chia.wallet.trading.trade_status import TradeStatus
-from chia.wallet.transaction_record import TransactionRecord
-from chia.wallet.transaction_sorting import SortKey
+from chives.consensus.block_rewards import calculate_base_farmer_reward, calculate_pool_reward
+from chives.rpc.full_node_rpc_api import FullNodeRpcApi
+from chives.rpc.full_node_rpc_client import FullNodeRpcClient
+from chives.rpc.rpc_server import start_rpc_server
+from chives.rpc.wallet_rpc_api import WalletRpcApi
+from chives.rpc.wallet_rpc_client import WalletRpcClient
+from chives.simulator.simulator_protocol import FarmNewBlockProtocol
+from chives.types.announcement import Announcement
+from chives.types.blockchain_format.program import Program
+from chives.types.peer_info import PeerInfo
+from chives.util.bech32m import encode_puzzle_hash
+from chives.consensus.coinbase import create_puzzlehash_for_pk
+from chives.util.hash import std_hash
+from chives.wallet.derive_keys import master_sk_to_wallet_sk
+from chives.util.ints import uint16, uint32, uint64
+from chives.wallet.trading.trade_status import TradeStatus
+from chives.wallet.transaction_record import TransactionRecord
+from chives.wallet.transaction_sorting import SortKey
 from tests.setup_nodes import bt, setup_simulators_and_wallets, self_hostname
 from tests.time_out_assert import time_out_assert
 
@@ -441,7 +441,7 @@ class TestWalletRpc:
             # Offers #
             ##########
 
-            # Create an offer of 5 chia for one CAT
+            # Create an offer of 5 chives for one CAT
             offer, trade_record = await client.create_offer_for_ids({uint32(1): -5, cat_0_id: 1}, validate_only=True)
             all_offers = await client.get_all_offers()
             assert len(all_offers) == 0

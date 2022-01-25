@@ -3,12 +3,12 @@ from binascii import hexlify
 
 from clvm_tools import binutils
 
-from chia.types.blockchain_format.program import Program
-from chia.types.blockchain_format.sized_bytes import bytes32
-from chia.types.condition_opcodes import ConditionOpcode
-from chia.util.ints import uint64
-from chia.wallet.chialisp import sexp
-from chia.wallet.puzzles.load_clvm import load_clvm
+from chives.types.blockchain_format.program import Program
+from chives.types.blockchain_format.sized_bytes import bytes32
+from chives.types.condition_opcodes import ConditionOpcode
+from chives.util.ints import uint64
+from chives.wallet.chialisp import sexp
+from chives.wallet.puzzles.load_clvm import load_clvm
 
 RATE_LIMITED_MODE = 1
 AGGREGATION_MODE = 2

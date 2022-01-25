@@ -10,8 +10,8 @@ from concurrent.futures.thread import ThreadPoolExecutor
 from blspy import G1Element
 from chiapos import DiskProver
 
-from chia.consensus.pos_quality import UI_ACTUAL_SPACE_CONSTANT_FACTOR, _expected_plot_size
-from chia.plotting.util import (
+from chives.consensus.pos_quality import UI_ACTUAL_SPACE_CONSTANT_FACTOR, _expected_plot_size
+from chives.plotting.util import (
     PlotInfo,
     PlotRefreshResult,
     PlotsRefreshParameter,
@@ -21,13 +21,13 @@ from chia.plotting.util import (
     stream_plot_info_pk,
     stream_plot_info_ph,
 )
-from chia.util.generator_tools import list_to_batches
-from chia.util.ints import uint16
-from chia.util.path import mkdir
-from chia.util.streamable import Streamable, streamable
-from chia.types.blockchain_format.proof_of_space import ProofOfSpace
-from chia.types.blockchain_format.sized_bytes import bytes32
-from chia.wallet.derive_keys import master_sk_to_local_sk
+from chives.util.generator_tools import list_to_batches
+from chives.util.ints import uint16
+from chives.util.path import mkdir
+from chives.util.streamable import Streamable, streamable
+from chives.types.blockchain_format.proof_of_space import ProofOfSpace
+from chives.types.blockchain_format.sized_bytes import bytes32
+from chives.wallet.derive_keys import master_sk_to_local_sk
 
 log = logging.getLogger(__name__)
 

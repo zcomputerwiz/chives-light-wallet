@@ -8,44 +8,44 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 
 from blspy import AugSchemeMPL, G2Element
 
-from chia.consensus.cost_calculator import calculate_cost_of_program, NPCResult
-from chia.full_node.bundle_tools import simple_solution_generator
-from chia.full_node.mempool_check_conditions import get_name_puzzle_conditions
-from chia.protocols.wallet_protocol import PuzzleSolutionResponse, CoinState
-from chia.types.blockchain_format.coin import Coin
-from chia.types.blockchain_format.program import Program
-from chia.types.blockchain_format.sized_bytes import bytes32
-from chia.types.announcement import Announcement
-from chia.types.generator_types import BlockGenerator
-from chia.types.spend_bundle import SpendBundle
-from chia.types.condition_opcodes import ConditionOpcode
-from chia.util.byte_types import hexstr_to_bytes
-from chia.util.condition_tools import conditions_dict_for_solution, pkm_pairs_for_conditions_dict
-from chia.util.ints import uint8, uint32, uint64, uint128
-from chia.util.json_util import dict_to_json_str
-from chia.wallet.cat_wallet.cat_constants import DEFAULT_CATS
-from chia.wallet.cat_wallet.cat_info import CATInfo
-from chia.wallet.cat_wallet.cat_utils import (
+from chives.consensus.cost_calculator import calculate_cost_of_program, NPCResult
+from chives.full_node.bundle_tools import simple_solution_generator
+from chives.full_node.mempool_check_conditions import get_name_puzzle_conditions
+from chives.protocols.wallet_protocol import PuzzleSolutionResponse, CoinState
+from chives.types.blockchain_format.coin import Coin
+from chives.types.blockchain_format.program import Program
+from chives.types.blockchain_format.sized_bytes import bytes32
+from chives.types.announcement import Announcement
+from chives.types.generator_types import BlockGenerator
+from chives.types.spend_bundle import SpendBundle
+from chives.types.condition_opcodes import ConditionOpcode
+from chives.util.byte_types import hexstr_to_bytes
+from chives.util.condition_tools import conditions_dict_for_solution, pkm_pairs_for_conditions_dict
+from chives.util.ints import uint8, uint32, uint64, uint128
+from chives.util.json_util import dict_to_json_str
+from chives.wallet.cat_wallet.cat_constants import DEFAULT_CATS
+from chives.wallet.cat_wallet.cat_info import CATInfo
+from chives.wallet.cat_wallet.cat_utils import (
     CAT_MOD,
     SpendableCAT,
     construct_cat_puzzle,
     unsigned_spend_bundle_for_spendable_cats,
     match_cat_puzzle,
 )
-from chia.wallet.derivation_record import DerivationRecord
-from chia.wallet.lineage_proof import LineageProof
-from chia.wallet.payment import Payment
-from chia.wallet.puzzles.genesis_checkers import ALL_LIMITATIONS_PROGRAMS
-from chia.wallet.puzzles.p2_delegated_puzzle_or_hidden_puzzle import (
+from chives.wallet.derivation_record import DerivationRecord
+from chives.wallet.lineage_proof import LineageProof
+from chives.wallet.payment import Payment
+from chives.wallet.puzzles.genesis_checkers import ALL_LIMITATIONS_PROGRAMS
+from chives.wallet.puzzles.p2_delegated_puzzle_or_hidden_puzzle import (
     DEFAULT_HIDDEN_PUZZLE_HASH,
     calculate_synthetic_secret_key,
 )
-from chia.wallet.transaction_record import TransactionRecord
-from chia.wallet.util.transaction_type import TransactionType
-from chia.wallet.util.wallet_types import WalletType, AmountWithPuzzlehash
-from chia.wallet.wallet import Wallet
-from chia.wallet.wallet_coin_record import WalletCoinRecord
-from chia.wallet.wallet_info import WalletInfo
+from chives.wallet.transaction_record import TransactionRecord
+from chives.wallet.util.transaction_type import TransactionType
+from chives.wallet.util.wallet_types import WalletType, AmountWithPuzzlehash
+from chives.wallet.wallet import Wallet
+from chives.wallet.wallet_coin_record import WalletCoinRecord
+from chives.wallet.wallet_info import WalletInfo
 
 
 # This should probably not live in this file but it's for experimental right now
@@ -82,7 +82,7 @@ class CATWallet:
             raise ValueError("Internal Error")
 
         try:
-            chia_tx, spend_bundle = await ALL_LIMITATIONS_PROGRAMS[
+            chives_tx, spend_bundle = await ALL_LIMITATIONS_PROGRAMS[
                 cat_tail_info["identifier"]
             ].generate_issuance_bundle(
                 self,
@@ -134,8 +134,8 @@ class CATWallet:
             name=bytes32(token_bytes()),
             memos=[],
         )
-        chia_tx = dataclasses.replace(chia_tx, spend_bundle=spend_bundle)
-        await self.standard_wallet.push_transaction(chia_tx)
+        chives_tx = dataclasses.replace(chives_tx, spend_bundle=spend_bundle)
+        await self.standard_wallet.push_transaction(chives_tx)
         await self.standard_wallet.push_transaction(cc_record)
         return self
 
@@ -506,21 +506,21 @@ class CATWallet:
         """
         announcement = None
         if fee > amount_to_claim:
-            chia_coins = await self.standard_wallet.select_coins(fee)
-            origin_id = list(chia_coins)[0].name()
-            chia_tx = await self.standard_wallet.generate_signed_transaction(
+            chives_coins = await self.standard_wallet.select_coins(fee)
+            origin_id = list(chives_coins)[0].name()
+            chives_tx = await self.standard_wallet.generate_signed_transaction(
                 uint64(0),
                 (await self.standard_wallet.get_new_puzzlehash()),
                 fee=uint64(fee - amount_to_claim),
-                coins=chia_coins,
+                coins=chives_coins,
                 origin_id=origin_id,  # We specify this so that we know the coin that is making the announcement
                 negative_change_allowed=False,
                 coin_announcements_to_consume={announcement_to_assert} if announcement_to_assert is not None else None,
             )
-            assert chia_tx.spend_bundle is not None
+            assert chives_tx.spend_bundle is not None
 
             message = None
-            for spend in chia_tx.spend_bundle.coin_spends:
+            for spend in chives_tx.spend_bundle.coin_spends:
                 if spend.coin.name() == origin_id:
                     conditions = spend.puzzle_reveal.to_program().run(spend.solution.to_program()).as_python()
                     for condition in conditions:
@@ -530,18 +530,18 @@ class CATWallet:
             assert message is not None
             announcement = Announcement(origin_id, message)
         else:
-            chia_coins = await self.standard_wallet.select_coins(fee)
-            selected_amount = sum([c.amount for c in chia_coins])
-            chia_tx = await self.standard_wallet.generate_signed_transaction(
+            chives_coins = await self.standard_wallet.select_coins(fee)
+            selected_amount = sum([c.amount for c in chives_coins])
+            chives_tx = await self.standard_wallet.generate_signed_transaction(
                 uint64(selected_amount + amount_to_claim - fee),
                 (await self.standard_wallet.get_new_puzzlehash()),
-                coins=chia_coins,
+                coins=chives_coins,
                 negative_change_allowed=True,
                 coin_announcements_to_consume={announcement_to_assert} if announcement_to_assert is not None else None,
             )
-            assert chia_tx.spend_bundle is not None
+            assert chives_tx.spend_bundle is not None
 
-        return chia_tx, announcement
+        return chives_tx, announcement
 
     async def generate_unsigned_spendbundle(
         self,
@@ -578,13 +578,13 @@ class CATWallet:
         assert selected_cat_amount >= starting_amount
 
         # Figure out if we need to absorb/melt some XCH as part of this
-        regular_chia_to_claim: int = 0
+        regular_chives_to_claim: int = 0
         if payment_amount > starting_amount:
             fee = uint64(fee + payment_amount - starting_amount)
         elif payment_amount < starting_amount:
-            regular_chia_to_claim = payment_amount
+            regular_chives_to_claim = payment_amount
 
-        need_chia_transaction = (fee > 0 or regular_chia_to_claim > 0) and (fee - regular_chia_to_claim != 0)
+        need_chives_transaction = (fee > 0 or regular_chives_to_claim > 0) and (fee - regular_chives_to_claim != 0)
 
         # Calculate standard puzzle solutions
         change = selected_cat_amount - starting_amount
@@ -604,16 +604,16 @@ class CATWallet:
 
         # Loop through the coins we've selected and gather the information we need to spend them
         spendable_cc_list = []
-        chia_tx = None
+        chives_tx = None
         first = True
         for coin in cat_coins:
             if first:
                 first = False
-                if need_chia_transaction:
-                    if fee > regular_chia_to_claim:
+                if need_chives_transaction:
+                    if fee > regular_chives_to_claim:
                         announcement = Announcement(coin.name(), b"$", b"\xca")
-                        chia_tx, _ = await self.create_tandem_xch_tx(
-                            fee, uint64(regular_chia_to_claim), announcement_to_assert=announcement
+                        chives_tx, _ = await self.create_tandem_xch_tx(
+                            fee, uint64(regular_chives_to_claim), announcement_to_assert=announcement
                         )
                         innersol = self.standard_wallet.make_solution(
                             primaries=primaries,
@@ -621,8 +621,8 @@ class CATWallet:
                             coin_announcements_to_assert=coin_announcements_bytes,
                             puzzle_announcements_to_assert=puzzle_announcements_bytes,
                         )
-                    elif regular_chia_to_claim > fee:
-                        chia_tx, _ = await self.create_tandem_xch_tx(fee, uint64(regular_chia_to_claim))
+                    elif regular_chives_to_claim > fee:
+                        chives_tx, _ = await self.create_tandem_xch_tx(fee, uint64(regular_chives_to_claim))
                         innersol = self.standard_wallet.make_solution(
                             primaries=primaries, coin_announcements_to_assert={announcement.name()}
                         )
@@ -650,18 +650,18 @@ class CATWallet:
             spendable_cc_list.append(new_spendable_cc)
 
         cat_spend_bundle = unsigned_spend_bundle_for_spendable_cats(CAT_MOD, spendable_cc_list)
-        chia_spend_bundle = SpendBundle([], G2Element())
-        if chia_tx is not None and chia_tx.spend_bundle is not None:
-            chia_spend_bundle = chia_tx.spend_bundle
+        chives_spend_bundle = SpendBundle([], G2Element())
+        if chives_tx is not None and chives_tx.spend_bundle is not None:
+            chives_spend_bundle = chives_tx.spend_bundle
 
         return (
             SpendBundle.aggregate(
                 [
                     cat_spend_bundle,
-                    chia_spend_bundle,
+                    chives_spend_bundle,
                 ]
             ),
-            chia_tx,
+            chives_tx,
         )
 
     async def generate_signed_transaction(
@@ -693,7 +693,7 @@ class CATWallet:
             if payment_sum > max_send:
                 raise ValueError(f"Can't send more than {max_send} in a single transaction")
 
-        unsigned_spend_bundle, chia_tx = await self.generate_unsigned_spendbundle(
+        unsigned_spend_bundle, chives_tx = await self.generate_unsigned_spendbundle(
             payments,
             fee,
             coins=coins,
@@ -724,24 +724,24 @@ class CATWallet:
             )
         ]
 
-        if chia_tx is not None:
+        if chives_tx is not None:
             tx_list.append(
                 TransactionRecord(
-                    confirmed_at_height=chia_tx.confirmed_at_height,
-                    created_at_time=chia_tx.created_at_time,
-                    to_puzzle_hash=chia_tx.to_puzzle_hash,
-                    amount=chia_tx.amount,
-                    fee_amount=chia_tx.fee_amount,
-                    confirmed=chia_tx.confirmed,
-                    sent=chia_tx.sent,
+                    confirmed_at_height=chives_tx.confirmed_at_height,
+                    created_at_time=chives_tx.created_at_time,
+                    to_puzzle_hash=chives_tx.to_puzzle_hash,
+                    amount=chives_tx.amount,
+                    fee_amount=chives_tx.fee_amount,
+                    confirmed=chives_tx.confirmed,
+                    sent=chives_tx.sent,
                     spend_bundle=None,
-                    additions=chia_tx.additions,
-                    removals=chia_tx.removals,
-                    wallet_id=chia_tx.wallet_id,
-                    sent_to=chia_tx.sent_to,
-                    trade_id=chia_tx.trade_id,
-                    type=chia_tx.type,
-                    name=chia_tx.name,
+                    additions=chives_tx.additions,
+                    removals=chives_tx.removals,
+                    wallet_id=chives_tx.wallet_id,
+                    sent_to=chives_tx.sent_to,
+                    trade_id=chives_tx.trade_id,
+                    type=chives_tx.type,
+                    name=chives_tx.name,
                     memos=[],
                 )
             )

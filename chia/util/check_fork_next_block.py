@@ -1,7 +1,7 @@
 from typing import List, Callable
 
-from chia.consensus.blockchain_interface import BlockchainInterface
-from chia.util.ints import uint32
+from chives.consensus.blockchain_interface import BlockchainInterface
+from chives.util.ints import uint32
 
 
 async def check_fork_next_block(

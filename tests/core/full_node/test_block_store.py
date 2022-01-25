@@ -5,10 +5,10 @@ import sqlite3
 
 import pytest
 
-from chia.consensus.blockchain import Blockchain
-from chia.full_node.block_store import BlockStore
-from chia.full_node.coin_store import CoinStore
-from chia.full_node.hint_store import HintStore
+from chives.consensus.blockchain import Blockchain
+from chives.full_node.block_store import BlockStore
+from chives.full_node.coin_store import CoinStore
+from chives.full_node.hint_store import HintStore
 from tests.util.db_connection import DBConnection
 from tests.setup_nodes import bt, test_constants
 
