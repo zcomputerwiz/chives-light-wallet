@@ -6,3 +6,6 @@
 	path = mozilla-ca
 	url = https://github.com/Chia-Network/mozilla-ca.git
         branch = main
+[submodule "chives-blockchain-gui"]
+	path = chives-blockchain-gui
+	url = https://github.com/zcomputerwiz/chives-blockchain-gui
