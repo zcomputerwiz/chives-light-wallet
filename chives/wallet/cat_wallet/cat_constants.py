@@ -22,9 +22,16 @@ USDV = {
     "symbol": "USDV",
 }
 
+BACKSTAGE = {
+"asset_id": "e8e75d4689b5c27d50c9acec17ff100f729554338bd34e7862289ad69bc0615e",
+    "name": "BackSTAGE",
+    "symbol": "BSTAGE",
+}
+
 DEFAULT_CATS = {
     KITTY["asset_id"]: KITTY,
     CHIVESPET["asset_id"]: CHIVESPET,
     PONY["asset_id"]: PONY,
     USDV["asset_id"]: USDV,
+    BACKSTAGE["asset_id"]: BACKSTAGE,
 }

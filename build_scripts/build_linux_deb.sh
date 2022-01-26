@@ -24,9 +24,10 @@ fi
 echo "Chives Installer Version is: $CHIVES_INSTALLER_VERSION"
 
 echo "Installing npm and electron packagers"
-npm install electron-packager -g
-npm install electron-installer-debian -g
-npm install lerna -g
+cd npm_linux_deb || exit
+npm ci
+PATH=$(npm bin):$PATH
+cd .. || exit
 
 echo "Create dist/"
 rm -rf dist
@@ -42,22 +43,26 @@ if [ "$LAST_EXIT_CODE" -ne 0 ]; then
 	exit $LAST_EXIT_CODE
 fi
 
-cp -r dist/daemon ../chives-blockchain-gui/packages/wallet
+cp -r dist/daemon ../chives-blockchain-gui/packages/gui
 cd .. || exit
 cd chives-blockchain-gui || exit
 
 echo "npm build"
-npm install
+lerna clean -y
+npm ci
+# Audit fix does not currently work with Lerna. See https://github.com/lerna/lerna/issues/1663
+# npm audit fix
 npm run build
-
 LAST_EXIT_CODE=$?
 if [ "$LAST_EXIT_CODE" -ne 0 ]; then
 	echo >&2 "npm run build failed!"
 	exit $LAST_EXIT_CODE
 fi
 
+# Change to the gui package
+cd packages/gui || exit
+
 # sets the version for chives-wallet in package.json
-cd ./packages/wallet || exit
 cp package.json package.json.orig
 jq --arg VER "$CHIVES_INSTALLER_VERSION" '.version=$VER' package.json > temp.json && mv temp.json package.json
 
