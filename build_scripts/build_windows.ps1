@@ -78,10 +78,18 @@ Write-Output "pip install chives-wallet"
 pip install --no-index --find-links=.\win_build\ chives-wallet
 
 Write-Output "   ---"
+Write-Output "curl upx"
+Write-Output "   ---"
+Invoke-WebRequest -Uri "https://github.com/upx/upx/releases/download/v3.96/upx-3.96-win64.zip" -OutFile "$env:GITHUB_WORKSPACE\upx-3.96-win64.zip"
+Write-Output "Using upx from https://github.com/upx/upx/ (3.96 win64)"
+Write-Output "Expanding downloaded archive"
+Expand-Archive $env:GITHUB_WORKSPACE\upx-3.96-win64.zip -DestinationPath $env:GITHUB_WORKSPACE
+
+Write-Output "   ---"
 Write-Output "Use pyinstaller to create chives .exe's"
 Write-Output "   ---"
 $SPEC_FILE = (python -c 'import chives; print(chives.PYINSTALLER_SPEC_PATH)') -join "`n"
-pyinstaller --log-level INFO $SPEC_FILE
+pyinstaller --upx-dir "$env:GITHUB_WORKSPACE\upx-3.96-win64" --log-level INFO $SPEC_FILE
 
 Write-Output "   ---"
 Write-Output "Copy chives executables to chives-blockchain-gui\"
